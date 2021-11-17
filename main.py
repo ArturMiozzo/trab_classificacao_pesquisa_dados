@@ -1,4 +1,6 @@
 import csv
+import hashTable
+import trieTree
 
 class player:
     def __init__(self, key):
@@ -13,14 +15,25 @@ class player:
         
 
 def readCSV(filename):
+    tree = trieTree.Trie()
+    hashTab = hashTable.hash(500)
+
+    isfirst = True
     with open(filename, encoding='utf8') as csvfile:
         spamreader = csv.reader(csvfile, delimiter=',')
         for row in spamreader:
-                print(f'{", ".join(row)}')
-                
+            if isfirst:
+                isfirst=False
+                continue
+            tree.insert(row[1])
+            hashTab.addItem(row[1], int(row[0]))
+    return tree, hashTab
+          
 
-def playerSearch(name):
+def playerSearch(name, tree, hashTab):
     print('searching player '+name)
+    for player in tree.query(name):
+        print(player + ' - '+ str(hashTab.searchItem(player).id))
     
 def userSearch(user):
     print('searching user '+user)
@@ -33,14 +46,14 @@ def tagsSearch(tags):
     for tag in tags:
         print(tag)
     
-#readCSV('INF01124_FIFA21\players.csv')
+tree, hashTab = readCSV('INF01124_FIFA21\players.csv')
 
 while(True):
 
     command = input('$ ')
 
     if(command.startswith('player')):
-        playerSearch(command[7::])
+        playerSearch(command[7::], tree, hashTab)
         
     if(command.startswith('user')):
         userSearch(command[5::])
