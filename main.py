@@ -41,9 +41,29 @@ def userSearch(user):
     print('searching user '+user)
     
 def topSearch(top, position):
+    #tratamento da entrada
+    if (position[0] != "'") or (position[len(position)-1] != "'"):
+        print('Formato errado!')
+        return
+    position = position[1:len(position)-1]
+
     print('searching top '+top + ' from position '+position)
+
+    #procura na tabela hash
+    count = 0
+    for player in tree.query(''):
+        if count == int(top):
+            break
+        item = hashTab.searchItem(player)
+        if (item != -1) and (position in item.pos):
+            print(player + ' - '+ str(item.id) + ' - ' + item.pos)
+            count = count+1
     
 def tagsSearch(tags):
+    for tag in tags:
+        if (tag[0] != "'") or (tag[len(tag)-1] != "'"):
+            print('Encontrada tag em formato errado!')
+            return
     print('searching tags:')
     for tag in tags:
         print(tag)
