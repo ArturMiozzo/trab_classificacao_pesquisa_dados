@@ -26,14 +26,16 @@ def readCSV(filename):
                 isfirst=False
                 continue
             tree.insert(row[1])
-            hashTab.addItem(row[1], int(row[0]))
+            hashTab.addItem(row[1], int(row[0]), row[2])
     return tree, hashTab
           
 
 def playerSearch(name, tree, hashTab):
     print('searching player '+name)
     for player in tree.query(name):
-        print(player + ' - '+ str(hashTab.searchItem(player).id))
+        item = hashTab.searchItem(player)
+        if item != -1:
+            print(player + ' - '+ str(item.id) + ' - ' + item.pos)
     
 def userSearch(user):
     print('searching user '+user)

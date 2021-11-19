@@ -1,7 +1,8 @@
 class item:
-    def __init__(self, key, id):
+    def __init__(self, key, id, pos):
         self.key = key
         self.id = id
+        self.pos = pos
         self.next = None        
 
 class hash:
@@ -11,7 +12,7 @@ class hash:
         self.numberOfElements = 0
 
         for i in range (tableSize):
-            self.hashTable[i] = item('empty', -1)
+            self.hashTable[i] = item('empty', -1,'')
 
     def NumberOfAllElements(self):
         return self.numberOfElements
@@ -79,7 +80,7 @@ class hash:
         ExtendHashTable  = [None] * newSize
 
         for i in range (newSize):
-            ExtendHashTable[i] = item('empty', -1)
+            ExtendHashTable[i] = item('empty', -1, '')
 
         for i in range(self.tableSize):
         
@@ -115,7 +116,7 @@ class hash:
          
         return -1
         
-    def addItem(self, key, id):
+    def addItem(self, key, id, pos):
 
         index = self.Hash(key,self.tableSize)
 
@@ -123,12 +124,13 @@ class hash:
         
             self.hashTable[index].key = key
             self.hashTable[index].id = id
+            self.hashTable[index].pos = pos
             
         else:
         
             Ptr = self.hashTable[index]
 
-            n = item(key, id)
+            n = item(key, id, pos)
             
             while(Ptr.next != None):
             
