@@ -32,6 +32,19 @@ def readCSV(filename):
             dictionary.addItem(int(row[0]),row[1])
     return tree, hashTab, dictionary
 
+def addTagsFromCSV(hashTab, dictionary, filename):
+    isfirst = True
+    with open(filename, encoding='utf8') as csvfile:
+        spamreader = csv.reader(csvfile, delimiter=',')
+        for row in spamreader:
+            if isfirst:
+                isfirst=False
+                continue
+            searched = dictionary.searchItem(int(row[1]))
+            if searched != -1:
+                hashTab.addTag(searched.name, row[2])
+    return hashTab
+
 def playerSearch(name, tree, hashTab):
     print('searching player '+name)
     for player in tree.query(name):
@@ -62,15 +75,37 @@ def topSearch(top, position):
             count = count+1
     
 def tagsSearch(tags):
+    #tratamento da entrada
+    tags_ = []
+    count = 0
     for tag in tags:
-        if (tag[0] != "'") or (tag[len(tag)-1] != "'"):
-            print('Encontrada tag em formato errado!')
-            return
+        if (tag[0] == "'"):
+            tag_ = tag[1::]
+        else:
+            tag_ = tag
+
+        if (tag_[len(tag_)-1] == "'"):
+            tag_ = tag_[:len(tag_)-1:]
+        tags_.append(tag_)
+
     print('searching tags:')
-    for tag in tags:
+    for tag in tags_:
         print(tag)
 
+    #procura na tabela hash
+    for player in tree.query(''):
+        bContains = True
+        item = hashTab.searchItem(player)
+
+        if (item != -1):
+            for tag in tags_:
+                bContains = bContains and (tag in item.tag)
+
+            if bContains:
+                print(player + ' - '+ str(item.id) + ' - ' + item.pos)
+
 tree, hashTab, dictionary = readCSV('INF01124_FIFA21\players.csv')
+hashTab = addTagsFromCSV(hashTab, dictionary,'INF01124_FIFA21\\tags.csv')
 
 while(True):
 
@@ -87,5 +122,5 @@ while(True):
         topSearch(top, position)
 
     if(command.startswith('tags')):
-        tags = command[5::].split(' ')
+        tags = command[5::].split("' ")
         tagsSearch(tags)
