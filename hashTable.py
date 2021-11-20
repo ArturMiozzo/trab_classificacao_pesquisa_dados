@@ -1,9 +1,12 @@
 class item:
-    def __init__(self, key, id, pos, tag):
+    def __init__(self, key, id, pos, tag, rating, totalRating, countRating):
         self.key = key
         self.id = id
         self.pos = pos
         self.tag = tag
+        self.rating = rating
+        self.totalRating = totalRating
+        self.countRating = countRating
         self.next = None        
 
 class hash:
@@ -13,7 +16,7 @@ class hash:
         self.numberOfElements = 0
 
         for i in range (tableSize):
-            self.hashTable[i] = item('empty', -1,'','')
+            self.hashTable[i] = item('empty', -1,'','',0,0,0)
 
     def NumberOfAllElements(self):
         return self.numberOfElements
@@ -81,7 +84,7 @@ class hash:
         ExtendHashTable  = [None] * newSize
 
         for i in range (newSize):
-            ExtendHashTable[i] = item('empty', -1, '', '')
+            ExtendHashTable[i] = item('empty', -1, '', '',0,0,0)
 
         for i in range(self.tableSize):
         
@@ -131,7 +134,7 @@ class hash:
         
             Ptr = self.hashTable[index]
 
-            n = item(key, id, pos, '')
+            n = item(key, id, pos, '',0,0,0)
             
             while(Ptr.next != None):
             
@@ -153,6 +156,12 @@ class hash:
             else:
                 Ptr.tag = Ptr.tag+', '+tag
 
+    def addRating(self, key, rating):
+        Ptr = self.searchItem(key)
+        if Ptr != -1:
+            Ptr.totalRating = Ptr.totalRating + float(rating)
+            Ptr.countRating = Ptr.countRating + 1
+            Ptr.rating = Ptr.totalRating / Ptr.countRating
 
 '''
     tableSize = 500

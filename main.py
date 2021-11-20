@@ -45,12 +45,25 @@ def addTagsFromCSV(hashTab, dictionary, filename):
                 hashTab.addTag(searched.name, row[2])
     return hashTab
 
+def addRatingsFromCSV(hashTab, dictionary, filename):
+    isfirst = True
+    with open(filename, encoding='utf8') as csvfile:
+        spamreader = csv.reader(csvfile, delimiter=',')
+        for row in spamreader:
+            if isfirst:
+                isfirst=False
+                continue
+            searched = dictionary.searchItem(int(row[1]))
+            if searched != -1:
+                hashTab.addRating(searched.name, row[2])
+    return hashTab
+
 def playerSearch(name, tree, hashTab):
     print('searching player '+name)
     for player in tree.query(name):
         item = hashTab.searchItem(player)
         if item != -1:
-            print(player + ' - '+ str(item.id) + ' - ' + item.pos)
+            print(player + ' - '+ str(item.id) + ' - ' + item.pos + ' - ' + str(item.rating) + ' - ' + str(item.countRating))
     
 def userSearch(user):
     print('searching user '+user)
@@ -71,13 +84,12 @@ def topSearch(top, position):
             break
         item = hashTab.searchItem(player)
         if (item != -1) and (position in item.pos):
-            print(player + ' - '+ str(item.id) + ' - ' + item.pos)
+            print(player + ' - '+ str(item.id) + ' - ' + item.pos + ' - ' + str(item.rating) + ' - ' + str(item.countRating))
             count = count+1
     
 def tagsSearch(tags):
     #tratamento da entrada
     tags_ = []
-    count = 0
     for tag in tags:
         if (tag[0] == "'"):
             tag_ = tag[1::]
@@ -102,9 +114,10 @@ def tagsSearch(tags):
                 bContains = bContains and (tag in item.tag)
 
             if bContains:
-                print(player + ' - '+ str(item.id) + ' - ' + item.pos)
+                print(player + ' - '+ str(item.id) + ' - ' + item.pos + ' - ' + str(item.rating) + ' - ' + str(item.countRating))
 
 tree, hashTab, dictionary = readCSV('INF01124_FIFA21\players.csv')
+hashTab = addRatingsFromCSV(hashTab, dictionary,'INF01124_FIFA21\minirating.csv')
 hashTab = addTagsFromCSV(hashTab, dictionary,'INF01124_FIFA21\\tags.csv')
 
 while(True):
