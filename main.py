@@ -2,6 +2,7 @@ import csv
 import hashTable
 import trieTree
 import dictHash
+import time
 
 class player:
     def __init__(self, key):
@@ -46,16 +47,45 @@ def addTagsFromCSV(hashTab, dictionary, filename):
     return hashTab
 
 def addRatingsFromCSV(hashTab, dictionary, filename):
+    
     isfirst = True
+    
+    lastSearch = -1
+    lastID = -1
+    
+    lastTotalRating = 0
+    LastCountRating = 0
+    LastRating = 0
+
     with open(filename, encoding='utf8') as csvfile:
+        
         spamreader = csv.reader(csvfile, delimiter=',')
+
         for row in spamreader:
+
             if isfirst:
                 isfirst=False
                 continue
-            searched = dictionary.searchItem(int(row[1]))
-            if searched != -1:
-                hashTab.addRating(searched.name, row[2])
+            
+            if lastID != int(row[1]):
+                lastID = int(row[1])
+                searched = dictionary.searchItem(lastID)
+
+                if lastSearch != -1:
+                    hashTab.addRating(lastSearch.name, LastRating)
+
+                lastTotalRating = float(row[2])
+                LastCountRating = 1
+                LastRating = lastTotalRating / LastCountRating
+                lastSearch = searched
+
+            else:
+                lastTotalRating = lastTotalRating + float(row[2])
+                LastCountRating = LastCountRating + 1
+                LastRating = lastTotalRating / LastCountRating
+
+
+    hashTab.addRating(lastSearch.name, LastRating)
     return hashTab
 
 def playerSearch(name, tree, hashTab):
@@ -116,9 +146,21 @@ def tagsSearch(tags):
             if bContains:
                 print(player + ' - '+ str(item.id) + ' - ' + item.pos + ' - ' + str(item.rating) + ' - ' + str(item.countRating))
 
+
+start = time.time()
 tree, hashTab, dictionary = readCSV('INF01124_FIFA21\players.csv')
+endPlayers = time.time()
+print("Players table time: "+str(endPlayers - start))
+
 hashTab = addRatingsFromCSV(hashTab, dictionary,'INF01124_FIFA21\\rating.csv')
+endRatings = time.time()
+print("Ratings table time: "+str(endRatings - endPlayers))
+print("Total time: "+str(endRatings - start))
+
 hashTab = addTagsFromCSV(hashTab, dictionary,'INF01124_FIFA21\\tags.csv')
+endTags = time.time()
+print("Tags table time: "+str(endTags - endRatings))
+print("Total time: "+str(endTags - start))
 
 while(True):
 
