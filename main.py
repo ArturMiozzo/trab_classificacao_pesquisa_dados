@@ -17,8 +17,8 @@ class player:
 
 def readCSV(filename):
     tree = trieTree.Trie()
-    hashTab = hashTable.hash(500)
-    dictionary = dictHash.dictHash(500)
+    hashTab = hashTable.hash(24631)
+    dictionary = dictHash.dictHash(24631)
 
     isfirst = True
     with open(filename, encoding='utf8') as csvfile:
@@ -117,7 +117,7 @@ def tagsSearch(tags):
                 print(player + ' - '+ str(item.id) + ' - ' + item.pos + ' - ' + str(item.rating) + ' - ' + str(item.countRating))
 
 tree, hashTab, dictionary = readCSV('INF01124_FIFA21\players.csv')
-hashTab = addRatingsFromCSV(hashTab, dictionary,'INF01124_FIFA21\minirating.csv')
+hashTab = addRatingsFromCSV(hashTab, dictionary,'INF01124_FIFA21\\rating.csv')
 hashTab = addTagsFromCSV(hashTab, dictionary,'INF01124_FIFA21\\tags.csv')
 
 while(True):
