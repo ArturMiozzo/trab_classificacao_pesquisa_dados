@@ -1,6 +1,7 @@
 import csv
 import hashTable
 import trieTree
+import dictHash
 
 class player:
     def __init__(self, key):
@@ -17,6 +18,7 @@ class player:
 def readCSV(filename):
     tree = trieTree.Trie()
     hashTab = hashTable.hash(500)
+    dictionary = dictHash.dictHash(500)
 
     isfirst = True
     with open(filename, encoding='utf8') as csvfile:
@@ -27,8 +29,8 @@ def readCSV(filename):
                 continue
             tree.insert(row[1])
             hashTab.addItem(row[1], int(row[0]), row[2])
-    return tree, hashTab
-          
+            dictionary.addItem(int(row[0]),row[1])
+    return tree, hashTab, dictionary
 
 def playerSearch(name, tree, hashTab):
     print('searching player '+name)
@@ -67,8 +69,8 @@ def tagsSearch(tags):
     print('searching tags:')
     for tag in tags:
         print(tag)
-    
-tree, hashTab = readCSV('INF01124_FIFA21\players.csv')
+
+tree, hashTab, dictionary = readCSV('INF01124_FIFA21\players.csv')
 
 while(True):
 
