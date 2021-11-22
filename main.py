@@ -2,19 +2,14 @@ import csv
 import hashTable
 import trieTree
 import dictHash
+import userTable
 import time
 
-class player:
-    def __init__(self, key):
-        self.key = key
-        self.next = None
-        self.sofifaID = 0
-        self.name = ''
-        self.positions = ''
-        self.rating = 0.0
-        self.globalRating = 0.0
-        self.count = 0
-        
+class entry:
+    def __init__(self, userId, playerId, rating):
+        self.userId = userId
+        self.playerId = playerId
+        self.rating = rating
 
 def readCSV(filename):
     tree = trieTree.Trie()
@@ -47,25 +42,33 @@ def addTagsFromCSV(hashTab, dictionary, filename):
     return hashTab
 
 def addRatingsFromCSV(hashTab, dictionary, filename):
+        
+    #tem aproximadamente 138500 usuarios, entao deixei a lista com 140000 pra ficar maior que a quantidade e não rolar colisão
+
+    #implementação com lista do python
+    usersList = [[] for x in range(140000)]
     
-    isfirst = True
-    
+    #implementação com tabela hash e lista encadeada do python
+    usersTab = userTable.userTable(140000)    
+
     lastSearch = -1
     lastID = -1
     
     lastTotalRating = 0
     LastCountRating = 0
-    LastRating = 0
 
     with open(filename, encoding='utf8') as csvfile:
         
         spamreader = csv.reader(csvfile, delimiter=',')
-
+        next(spamreader, None)
+        
         for row in spamreader:
+            
+            #adicionando a lista do python um objeto entry
+            usersList[int(row[0])].append(entry(int(row[0]), int(row[1]), float(row[2])))
 
-            if isfirst:
-                isfirst=False
-                continue
+            #adicionando a tabela hash
+            usersTab.addItem(int(row[0]), int(row[1]), float(row[2]))
             
             if lastID != int(row[1]):
                 lastID = int(row[1])
@@ -76,13 +79,11 @@ def addRatingsFromCSV(hashTab, dictionary, filename):
 
                 lastTotalRating = float(row[2])
                 LastCountRating = 1
-                LastRating = lastTotalRating / LastCountRating
                 lastSearch = searched
 
             else:
                 lastTotalRating = lastTotalRating + float(row[2])
                 LastCountRating = LastCountRating + 1
-                LastRating = lastTotalRating / LastCountRating
 
 
     hashTab.addRating(lastSearch.name, LastRating)

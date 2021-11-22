@@ -135,13 +135,11 @@ class hash:
             Ptr = self.hashTable[index]
 
             n = item(key, id, pos, '',0,0,0)
-            
-            while(Ptr.next != None):
-            
-                Ptr = Ptr.next
-            
-            Ptr.next = n
-        
+
+            n.next = Ptr
+
+            self.hashTable[index] = n
+                    
         if(self.NumberOfAllElements() == int(0.5*self.tableSize)):
         
             self.reHash()
