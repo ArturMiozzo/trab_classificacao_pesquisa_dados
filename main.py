@@ -72,7 +72,7 @@ def addRatingsFromCSV(hashTab, dictionary, filename):
                 searched = dictionary.searchItem(lastID)
 
                 if lastSearch != -1:
-                    hashTab.addRating(lastSearch.name, LastRating)
+                    hashTab.addRating(lastSearch.name, LastCountRating, lastTotalRating)
 
                 lastTotalRating = float(row[2])
                 LastCountRating = 1
@@ -85,7 +85,7 @@ def addRatingsFromCSV(hashTab, dictionary, filename):
                 LastRating = lastTotalRating / LastCountRating
 
 
-    hashTab.addRating(lastSearch.name, LastRating)
+    hashTab.addRating(lastSearch.name, LastCountRating, lastTotalRating)
     return hashTab
 
 def playerSearch(name, tree, hashTab):

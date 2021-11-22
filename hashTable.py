@@ -156,11 +156,11 @@ class hash:
             else:
                 Ptr.tag = Ptr.tag+', '+tag
 
-    def addRating(self, key, rating):
+    def addRating(self, key, count, total):
         Ptr = self.searchItem(key)
         if Ptr != -1:
-            Ptr.totalRating = Ptr.totalRating + float(rating)
-            Ptr.countRating = Ptr.countRating + 1
+            Ptr.totalRating = Ptr.totalRating + float(total)
+            Ptr.countRating = Ptr.countRating + count
             Ptr.rating = Ptr.totalRating / Ptr.countRating
 
 '''
