@@ -88,6 +88,32 @@ def addRatingsFromCSV(hashTab, dictionary, filename):
     hashTab.addRating(lastSearch.name, LastCountRating, lastTotalRating)
     return hashTab
 
+def orderByRating(players):
+    quicksort(players,0,len(players)-1)
+
+def quicksort(players, i, f):
+    if(f>i):
+        p = getLomuto(players, i, f)
+        quicksort(players,i,p-1)
+        quicksort(players,p+1,f)
+
+def getLomuto(players, p, r):
+    item = players[r]
+    i = p-1
+    j = p
+    while (j<r):
+        if players[j].rating >= item.rating:
+            i=i+1
+            swap(players,i,j)
+        j=j+1
+    swap(players,i+1,r)
+    return i+1
+
+def swap(players,i,j):
+    temp = players[i]
+    players[i] = players[j]
+    players[j] = temp
+
 def playerSearch(name, tree, hashTab):
     print('searching player '+name)
     for player in tree.query(name):
@@ -107,15 +133,23 @@ def topSearch(top, position):
 
     print('searching top '+top + ' from position '+position)
 
-    #procura na tabela hash
-    count = 0
+    #procura na tabela hash todos os jogadores que se encaixam na posição informada
+    # e que possuam mais de 1000 avaliações
+    players = []
     for player in tree.query(''):
-        if count == int(top):
-            break
         item = hashTab.searchItem(player)
-        if (item != -1) and (position in item.pos):
-            print(player + ' - '+ str(item.id) + ' - ' + item.pos + ' - ' + str(item.rating) + ' - ' + str(item.countRating))
-            count = count+1
+        if (item != -1) and (position in item.pos) and (item.countRating >= 1000):
+            players.append(item)
+
+    #ordena entradas
+    orderByRating(players)
+
+    limit = min(int(top),len(players))
+
+    #seleciona as n primeiras para mostrar
+    for count in range(limit):
+        item = players[count]
+        print(item.key + ' - '+ str(item.id) + ' - ' + item.pos + ' - ' + str(item.rating) + ' - ' + str(item.countRating))
     
 def tagsSearch(tags):
     #tratamento da entrada
