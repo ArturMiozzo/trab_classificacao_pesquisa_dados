@@ -94,7 +94,6 @@ class dictHash:
     def searchItem(self, id):
 
         index = self.Hash(id,self.tableSize)
-        foundName = False
         
         Ptr = self.hashTable[index]
         
@@ -109,7 +108,9 @@ class dictHash:
         return -1
         
     def addItem(self, id, name):
+
         index = self.Hash(id,self.tableSize)
+
         if(self.hashTable[index].id == 0):
 
             self.hashTable[index].id = id
@@ -121,14 +122,6 @@ class dictHash:
 
             n = entry(id, name)
             
-            while(Ptr.next != None):
-            
-                Ptr = Ptr.next
-            
-            Ptr.next = n
-        
-        if(self.NumberOfAllElements() == int(0.5*self.tableSize)):
-        
-            self.reHash()
-        
-        self.numberOfElements += 1
+            n.next = Ptr
+
+            self.hashTable[index] = n

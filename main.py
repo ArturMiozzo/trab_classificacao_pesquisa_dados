@@ -44,11 +44,6 @@ def addTagsFromCSV(hashTab, dictionary, filename):
 def addRatingsFromCSV(hashTab, dictionary, filename):
         
     #tem aproximadamente 138500 usuarios, entao deixei a lista com 140000 pra ficar maior que a quantidade e não rolar colisão
-
-    #implementação com lista do python
-    usersList = [[] for x in range(140000)]
-    
-    #implementação com tabela hash e lista encadeada do python
     usersTab = userTable.userTable(140000)    
 
     lastSearch = -1
@@ -64,10 +59,6 @@ def addRatingsFromCSV(hashTab, dictionary, filename):
         
         for row in spamreader:
             
-            #adicionando a lista do python um objeto entry
-            usersList[int(row[0])].append(entry(int(row[0]), int(row[1]), float(row[2])))
-
-            #adicionando a tabela hash
             usersTab.addItem(int(row[0]), int(row[1]), float(row[2]))
             
             if lastID != int(row[1]):
@@ -87,7 +78,7 @@ def addRatingsFromCSV(hashTab, dictionary, filename):
 
 
     hashTab.addRating(lastSearch.name, LastCountRating, lastTotalRating)
-    return hashTab
+    return hashTab, usersTab
 
 def orderByRating(players):
     quicksort(players,0,len(players)-1)
@@ -116,15 +107,19 @@ def swap(players,i,j):
     players[j] = temp
 
 def playerSearch(name, tree, hashTab):
-    print('searching player '+name)
     for player in tree.query(name):
         item = hashTab.searchItem(player)
         if item != -1:
             print(player + ' - '+ str(item.id) + ' - ' + item.pos + ' - ' + str(item.rating) + ' - ' + str(item.countRating))
     
 def userSearch(user):
-    print('searching user '+user)
-    
+    for rating in usersTab.searchItem(int(user)).ratings:
+        itemId = dictionary.searchItem(rating.playerId)
+        if itemId != -1:
+            item = hashTab.searchItem(itemId.name)
+            if item != -1:
+                print(str(rating.playerId) + ' - '+ str(itemId.name) + ' - '+ str(item.rating) + ' - '+ str(item.countRating) + ' - ' + str(rating.rating))
+           
 def topSearch(top, position):
     #tratamento da entrada
     if (position[0] != "'") or (position[len(position)-1] != "'"):
@@ -165,7 +160,6 @@ def tagsSearch(tags):
             tag_ = tag_[:len(tag_)-1:]
         tags_.append(tag_)
 
-    print('searching tags:')
     for tag in tags_:
         print(tag)
 
@@ -187,7 +181,7 @@ tree, hashTab, dictionary = readCSV('INF01124_FIFA21\players.csv')
 endPlayers = time.time()
 print("Players table time: "+str(endPlayers - start))
 
-hashTab = addRatingsFromCSV(hashTab, dictionary,'INF01124_FIFA21\\rating.csv')
+hashTab, usersTab = addRatingsFromCSV(hashTab, dictionary,'INF01124_FIFA21\\rating.csv')
 endRatings = time.time()
 print("Ratings table time: "+str(endRatings - endPlayers))
 print("Total time: "+str(endRatings - start))

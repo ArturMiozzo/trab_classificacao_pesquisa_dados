@@ -1,16 +1,19 @@
 from array import array
 
-class entry:
-    def __init__(self, userId, playerId, rating):
-        self.userId = userId
+class rating:
+    def __init__(self, playerId, rating):
         self.playerId = playerId
         self.rating = rating
-        self.next = None
 
+class userRatings:
+    def __init__(self, userId):
+        self.userId = userId
+        self.ratings = [rating(-1, -1.0) for x in range(20)]
+        
 class userTable:
     def __init__(self, tableSize):
         self.tableSize = tableSize
-        self.hashTable = [entry(0, 0, 0.0) for x in range(tableSize)]
+        self.hashTable = [userRatings(0) for x in range(tableSize)]
         self.numberOfElements = 0
 
     def NumberOfAllElements(self):
@@ -71,7 +74,7 @@ class userTable:
         ExtendHashTable  = [None] * newSize
 
         for i in range (newSize):
-            ExtendHashTable[i] = entry(0, 0, 0.0)
+            ExtendHashTable[i] = userRatings(0)
 
         for i in range(self.tableSize):
         
@@ -92,41 +95,29 @@ class userTable:
 
     def searchItem(self, userId):
 
-        index = self.Hash(userId,self.tableSize)
-        foundName = False
+        return self.hashTable[userId]
         
-        Ptr = self.hashTable[index]
+    def addItem(self, userId, playerId, userRating):
         
-        while(Ptr != None):
-            
-            if(Ptr.userId == userId):
-            
-                return Ptr
-            
-            Ptr = Ptr.next
-         
-        return -1
-        
-    def addItem(self, userId, playerId, rating):
-        
-        #index = self.Hash(userId,self.tableSize)
         index = userId
 
         if(self.hashTable[index].userId == 0):
 
             self.hashTable[index].userId = userId
-            self.hashTable[index].playerId = playerId
-            self.hashTable[index].rating = rating
-        
-            #self.numberOfElements += 1
+            self.hashTable[index].ratings[0] = rating(playerId, userRating)
             
         else:
             
-            n = entry(userId, playerId, rating)
-            
-            n.next = self.hashTable[index]
-            self.hashTable[index] = n
-        
-        #if(self.NumberOfAllElements() == int(0.5*self.tableSize)):
-        
-            #self.reHash()
+            n = rating(playerId, userRating)
+
+            for i in range(19, -1, -1):
+                
+                if(self.hashTable[index].ratings[i].rating<userRating):
+                    
+                    if(i<19):
+                        self.hashTable[index].ratings[i+1] = self.hashTable[index].ratings[i]
+                    
+                    self.hashTable[index].ratings[i] = n
+
+                else:
+                    return

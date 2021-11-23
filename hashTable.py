@@ -123,7 +123,7 @@ class hash:
     def addItem(self, key, id, pos):
 
         index = self.Hash(key,self.tableSize)
-
+            
         if(self.hashTable[index].key == "empty"):
         
             self.hashTable[index].key = key
@@ -139,12 +139,6 @@ class hash:
             n.next = Ptr
 
             self.hashTable[index] = n
-                    
-        if(self.NumberOfAllElements() == int(0.5*self.tableSize)):
-        
-            self.reHash()
-        
-        self.numberOfElements += 1
 
     def addTag(self, key, tag):
         Ptr = self.searchItem(key)
