@@ -131,16 +131,24 @@ def topSearch(top, position):
 
     #procura na tabela hash todos os jogadores que se encaixam na posição informada
     # e que possuam mais de 1000 avaliações
-    players = []
+    players    = [hashTable.item('empty', -1,'','',0,0,0)]*1
+    auxPlayers = []
     for player in tree.query(''):
         item = hashTab.searchItem(player)
         if (item != -1) and (position in item.pos) and (item.countRating >= 1000):
-            players.append(item)
+            players[len(players)-1] = item
+            auxPlayers = players
+            players = [hashTable.item('empty', -1,'','',0,0,0)]*(len(players)+1)
+            j=0
+            for player in auxPlayers:
+                players[j] = player
+                j = j+1
+
 
     #ordena entradas
     orderByRating(players)
 
-    limit = min(int(top),len(players))
+    limit = min(int(top),len(players)-1)
 
     #seleciona as n primeiras para mostrar
     for count in range(limit):
@@ -149,18 +157,16 @@ def topSearch(top, position):
     
 def tagsSearch(tags):
     #tratamento da entrada
-    tags_ = []
+    i = 0
+    while(i < len(tags)):
+        if(tags[i][0] == "'"):
+            tags[i] = tags[i][1::]
+
+        if(tags[i][len(tags[i])-1] == "'"):
+            tags[i] = tags[i][:len(tags[i])-1:]
+        i=i+1
+
     for tag in tags:
-        if (tag[0] == "'"):
-            tag_ = tag[1::]
-        else:
-            tag_ = tag
-
-        if (tag_[len(tag_)-1] == "'"):
-            tag_ = tag_[:len(tag_)-1:]
-        tags_.append(tag_)
-
-    for tag in tags_:
         print(tag)
 
     #procura na tabela hash
@@ -169,7 +175,7 @@ def tagsSearch(tags):
         item = hashTab.searchItem(player)
 
         if (item != -1):
-            for tag in tags_:
+            for tag in tags:
                 bContains = bContains and (tag in item.tag)
 
             if bContains:
